@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Daily</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#FAF6F0;--card:#fff;--card2:#FFF8F0;
+  --a:#C4855A;--al:#F5E4D0;--ad:#7A4A28;
+  --t:#2C1A0E;--ts:#8A6A52;--b:#E8D5C0;
+  --ok:#4E9068;--err:#B85050;--gold:#D4A030;
+  --sh:rgba(100,55,15,.10)
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t);min-height:100vh;padding-bottom:80px}
+h1,h2,h3,h4{font-family:'Playfair Display',Georgia,serif}
+
+/* ── HEADER ── */
+.hdr{background:var(--card);border-bottom:1px solid var(--b);padding:12px 18px;position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 2px 10px var(--sh)}
+.logo{font-size:18px;color:var(--ad);font-weight:600;font-family:'Playfair Display',serif}.logo span{color:var(--a)}
+.hdr-right{display:flex;align-items:center;gap:12px}
+.streak-badge{display:flex;align-items:center;gap:5px;background:#FFF3E0;border-radius:20px;padding:6px 12px;font-size:13px;font-weight:600;color:#C06010;border:1px solid #FFCC80}
+.xp-badge{display:flex;align-items:center;gap:5px;background:var(--al);border-radius:20px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--ad);border:1px solid var(--b)}
+
+/* ── NAV ── */
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--b);display:flex;z-index:200;box-shadow:0 -2px 10px var(--sh)}
+.nb{flex:1;padding:10px 4px 8px;border:none;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;font-size:10px;color:var(--ts);transition:color .2s}
+.nb.on{color:var(--a)}
+.nb .ni{font-size:22px;line-height:1}
+.nb .nl{font-size:10px}
+
+/* ── SECTIONS ── */
+.sec{display:none}.sec.on{display:block}
+.wrap{max-width:680px;margin:0 auto;padding:18px 16px}
+
+/* ── HOME ── */
+.level-card{background:linear-gradient(135deg,var(--ad),var(--a));border-radius:18px;padding:20px;color:#fff;margin-bottom:16px}
+.level-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.level-name{font-size:13px;opacity:.85}
+.level-num{font-size:22px;font-weight:600;font-family:'Playfair Display',serif}
+.xp-bar{background:rgba(255,255,255,.25);border-radius:10px;height:8px;overflow:hidden;margin-bottom:6px}
+.xp-fill{height:100%;background:#fff;border-radius:10px;transition:width .6s}
+.xp-label{font-size:11px;opacity:.8;text-align:right}
+
+.today-card{background:var(--card);border-radius:16px;border:1px solid var(--b);padding:18px;margin-bottom:16px;box-shadow:0 3px 14px var(--sh)}
+.today-tag{font-size:11px;background:var(--al);color:var(--ad);border-radius:20px;padding:3px 10px;font-weight:600;display:inline-block;margin-bottom:8px}
+.today-card h3{font-size:18px;margin-bottom:4px}
+.today-card p{font-size:13px;color:var(--ts);margin-bottom:14px}
+.today-progress{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.tp-bar{flex:1;height:7px;background:var(--al);border-radius:5px;overflow:hidden}
+.tp-fill{height:100%;background:var(--a);border-radius:5px;transition:width .4s}
+.tp-label{font-size:12px;color:var(--ts);white-space:nowrap}
+.btn-start{width:100%;padding:13px;background:var(--a);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s;font-family:inherit}
+.btn-start:hover{background:var(--ad)}
+.btn-outline{width:100%;padding:11px;background:none;color:var(--a);border:2px solid var(--a);border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn-outline:hover{background:var(--al)}
+
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat-mini{background:var(--card);border-radius:12px;border:1px solid var(--b);padding:14px 10px;text-align:center}
+.stat-n{font-size:26px;font-weight:600;color:var(--ad);font-family:'Playfair Display',serif}
+.stat-l{font-size:11px;color:var(--ts);margin-top:2px}
+
+.badges-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.badge-chip{background:var(--card);border:1px solid var(--b);border-radius:20px;padding:5px 12px;font-size:12px;display:flex;align-items:center;gap:5px}
+.badge-chip.earned{background:#FFF8E0;border-color:#FFD060;color:#A07010}
+.badge-chip.locked{opacity:.45}
+
+/* ── PROGRAM ── */
+.week-section{margin-bottom:24px}
+.week-title{font-size:14px;font-weight:600;color:var(--ts);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.add-words-btn{font-size:12px;color:var(--a);background:none;border:1px solid var(--a);border-radius:20px;padding:4px 12px;cursor:pointer;font-family:inherit}
+.day-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.day-card{background:var(--card);border-radius:14px;border:1px solid var(--b);padding:14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.day-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px var(--sh)}
+.day-card.done{border-color:#B0D8B8;background:#F4FBF6}
+.day-card.today-day{border-color:var(--a);border-width:2px}
+.day-card.locked{opacity:.5;cursor:default}
+.day-card.locked:hover{transform:none;box-shadow:none}
+.day-num{font-size:11px;color:var(--ts);margin-bottom:4px}
+.day-name{font-size:14px;font-weight:600;color:var(--t);margin-bottom:6px}
+.day-words{font-size:11px;color:var(--ts);margin-bottom:8px}
+.day-pbar{height:4px;background:var(--al);border-radius:2px;overflow:hidden}
+.day-pfill{height:100%;background:var(--a);border-radius:2px}
+.day-done-mark{position:absolute;top:10px;right:10px;font-size:18px}
+
+/* ── LEARN (day detail) ── */
+.learn-header{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.back-btn{background:none;border:none;font-size:22px;cursor:pointer;color:var(--ts)}
+.learn-header h2{font-size:20px}
+
+.word-card-big{background:var(--card);border-radius:20px;border:1px solid var(--b);overflow:hidden;margin-bottom:14px;box-shadow:0 4px 18px var(--sh)}
+.wc-img{height:200px;display:flex;align-items:center;justify-content:center;font-size:100px;position:relative;overflow:hidden}
+.wc-img::before{content:'';position:absolute;inset:0;opacity:.15}
+.wc-body{padding:18px}
+.wc-en{font-size:22px;font-weight:600;color:var(--t);margin-bottom:4px;font-family:'Playfair Display',serif}
+.wc-ru{font-size:14px;color:var(--ts);margin-bottom:10px}
+.wc-ex{font-size:13px;color:var(--t);font-style:italic;line-height:1.6;margin-bottom:4px}
+.wc-exru{font-size:12px;color:var(--a);line-height:1.5;margin-bottom:10px}
+.wc-mnem{font-size:12px;color:var(--ad);background:linear-gradient(135deg,#FFF4E4,#FAF0E0);border-radius:8px;padding:8px 12px;border-left:3px solid var(--a);line-height:1.5}
+.wc-foot{padding:12px 18px;border-top:1px solid var(--b);display:flex;align-items:center;justify-content:space-between}
+.aud-btn{background:var(--al);border:none;border-radius:8px;padding:7px 14px;font-size:13px;color:var(--ad);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;font-family:inherit}
+.aud-btn:hover{background:var(--a);color:#fff}
+
+/* word list within a day (compact) */
+.day-words-list{display:grid;gap:10px;margin-bottom:16px}
+.dwl-item{background:var(--card);border-radius:12px;border:1px solid var(--b);display:flex;align-items:center;gap:12px;padding:10px 12px;cursor:pointer;transition:all .2s}
+.dwl-item:hover{border-color:var(--a);background:var(--al)}
+.dwl-em{font-size:36px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border-radius:10px;flex-shrink:0}
+.dwl-info{flex:1;min-width:0}
+.dwl-en{font-size:14px;font-weight:600;color:var(--t)}
+.dwl-ru{font-size:12px;color:var(--ts)}
+.dwl-ex{font-size:11.5px;color:var(--ts);font-style:italic;line-height:1.4;margin-top:2px}
+
+/* ── QUIZ ── */
+.qz-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px}
+.qz-progress{display:flex;align-items:center;gap:8px;flex:1}
+.qz-pbar{flex:1;height:6px;background:var(--al);border-radius:3px;overflow:hidden}
+.qz-pfill{height:100%;background:var(--a);border-radius:3px;transition:width .3s}
+.qz-counter{font-size:12px;color:var(--ts);white-space:nowrap}
+.qz-score-badge{background:var(--al);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:600;color:var(--ad)}
+
+.qz-card{background:var(--card);border-radius:20px;border:1px solid var(--b);padding:26px;box-shadow:0 4px 18px var(--sh);min-height:340px;display:flex;flex-direction:column}
+.qz-em{font-size:72px;text-align:center;margin-bottom:14px}
+.qz-label{font-size:11px;color:var(--ts);text-align:center;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.qz-q{font-size:20px;text-align:center;color:var(--t);margin-bottom:20px;line-height:1.4;font-family:'Playfair Display',serif}
+.qz-q em{font-style:normal;background:var(--al);border-radius:4px;padding:0 6px}
+
+.mc-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.mc-btn{padding:13px 12px;border:2px solid var(--b);border-radius:11px;background:var(--card);font-size:13px;cursor:pointer;text-align:left;transition:all .2s;color:var(--t);font-family:inherit;line-height:1.3}
+.mc-btn:hover:not(:disabled){border-color:var(--a);background:var(--al)}
+.mc-btn.ok{border-color:var(--ok)!important;background:#EAF5EE!important;color:var(--ok)!important}
+.mc-btn.bad{border-color:var(--err)!important;background:#FFE8E8!important;color:var(--err)!important}
+
+.qz-inp{width:100%;padding:13px 14px;border:2px solid var(--b);border-radius:11px;font-size:15px;background:var(--card);color:var(--t);outline:none;transition:border-color .2s;margin-bottom:10px;font-family:inherit}
+.qz-inp:focus{border-color:var(--a)}
+.qz-inp.ok{border-color:var(--ok);background:#EAF5EE}
+.qz-inp.bad{border-color:var(--err);background:#FFE8E8}
+
+.qz-fb{text-align:center;padding:10px;border-radius:9px;font-size:14px;font-weight:500;margin-bottom:10px;display:none}
+.qz-fb.on{display:block}
+.qz-fb.ok{background:#EAF5EE;color:var(--ok)}
+.qz-fb.bad{background:#FFE8E8;color:var(--err)}
+
+.btn-check{width:100%;padding:13px;border:none;border-radius:11px;background:var(--a);color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s;margin-top:auto;font-family:inherit}
+.btn-check:hover{background:var(--ad)}
+.btn-next{width:100%;padding:13px;border:none;border-radius:11px;background:var(--al);color:var(--ad);font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;display:none;font-family:inherit}
+.btn-next.on{display:block}
+.btn-next:hover{background:var(--a);color:#fff}
+
+/* XP popup */
+.xp-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--a);color:#fff;padding:10px 22px;border-radius:30px;font-size:16px;font-weight:700;pointer-events:none;opacity:0;z-index:999;font-family:'Playfair Display',serif}
+.xp-pop.show{animation:xpFloat 1.2s ease forwards}
+@keyframes xpFloat{0%{opacity:1;transform:translate(-50%,-50%) scale(.8)}30%{opacity:1;transform:translate(-50%,-70%) scale(1.1)}100%{opacity:0;transform:translate(-50%,-110%) scale(1)}}
+
+/* ── PROGRESS ── */
+.big-score{background:linear-gradient(135deg,var(--ad),var(--a));color:#fff;border-radius:20px;padding:28px;text-align:center;margin-bottom:18px}
+.big-score-n{font-size:64px;font-weight:600;font-family:'Playfair Display',serif}
+.big-score-l{font-size:14px;opacity:.85;margin-top:4px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+.sg-card{background:var(--card);border-radius:12px;border:1px solid var(--b);padding:14px 10px;text-align:center}
+.sg-n{font-size:30px;font-weight:600;color:var(--ad);font-family:'Playfair Display',serif}
+.sg-l{font-size:11px;color:var(--ts)}
+.badges-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:22px}
+.badge-card{background:var(--card);border-radius:12px;border:1px solid var(--b);padding:14px;text-align:center}
+.badge-card.earned{background:#FFFBEC;border-color:#FFD060}
+.badge-card.locked{opacity:.4}
+.badge-icon{font-size:30px;margin-bottom:6px}
+.badge-name{font-size:12px;font-weight:600;color:var(--t)}
+.badge-desc{font-size:10px;color:var(--ts);margin-top:2px}
+
+/* ── ADD WORDS MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:flex;align-items:flex-end;justify-content:center}
+.modal-bg.hide{display:none}
+.modal{background:var(--card);border-radius:20px 20px 0 0;padding:24px 20px;width:100%;max-width:680px;max-height:80vh;overflow-y:auto}
+.modal h3{font-size:18px;margin-bottom:16px}
+.modal-input{width:100%;padding:11px 13px;border:1.5px solid var(--b);border-radius:10px;font-size:14px;background:var(--card);color:var(--t);outline:none;margin-bottom:8px;font-family:inherit}
+.modal-input:focus{border-color:var(--a)}
+.modal-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:var(--ts)}
+
+/* ── MISC ── */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--t);color:#fff;padding:10px 18px;border-radius:9px;font-size:13px;opacity:0;transition:all .3s;z-index:999;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.reset-btn{padding:9px 18px;border:1.5px solid var(--b);border-radius:9px;background:var(--card);color:var(--ts);font-size:13px;cursor:pointer;font-family:inherit}
+.reset-btn:hover{border-color:var(--err);color:var(--err)}
+
+@media(max-width:500px){
+  .mc-grid{grid-template-columns:1fr}
+  .day-grid{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .stats-row{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo">English <span>Daily</span></div>
+  <div class="hdr-right">
+    <div class="streak-badge">🔥 <span id="streak-n">0</span> дней</div>
+    <div class="xp-badge">⭐ <span id="xp-n">0</span> XP</div>
+  </div>
+</div>
+
+<!-- SECTIONS -->
+<div class="sec on" id="sec-home">
+  <div class="wrap">
+    <div class="level-card">
+      <div class="level-top">
+        <div><div class="level-name" id="lv-name">Уровень 1</div><div class="level-num" id="lv-title">Новичок</div></div>
+        <div style="font-size:36px" id="lv-icon">🌱</div>
+      </div>
+      <div class="xp-bar"><div class="xp-fill" id="xp-bar-fill" style="width:0%"></div></div>
+      <div class="xp-label" id="xp-label">0 / 100 XP</div>
+    </div>
+    <div class="today-card" id="today-card"></div>
+    <div class="stats-row" id="home-stats"></div>
+    <h3 style="font-size:16px;margin-bottom:10px">Достижения</h3>
+    <div class="badges-row" id="home-badges"></div>
+  </div>
+</div>
+
+<div class="sec" id="sec-program">
+  <div class="wrap">
+    <h2 style="font-size:22px;margin-bottom:18px">Программа обучения</h2>
+    <div id="program-content"></div>
+  </div>
+</div>
+
+<div class="sec" id="sec-learn">
+  <div class="wrap">
+    <div class="learn-header">
+      <button class="back-btn" onclick="goBack()">←</button>
+      <h2 id="learn-title">День 1</h2>
+    </div>
+    <div id="learn-content"></div>
+  </div>
+</div>
+
+<div class="sec" id="sec-quiz">
+  <div class="wrap">
+    <div class="qz-top">
+      <div class="qz-progress">
+        <div class="qz-pbar"><div class="qz-pfill" id="qz-pfill" style="width:0%"></div></div>
+        <span class="qz-counter" id="qz-ctr">0 / 0</span>
+      </div>
+      <div class="qz-score-badge" id="qz-score">0%</div>
+    </div>
+    <div class="qz-card" id="qz-card"><div id="qz-content"></div></div>
+  </div>
+</div>
+
+<div class="sec" id="sec-progress">
+  <div class="wrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px">
+      <h2 style="font-size:22px">Мой прогресс</h2>
+      <button class="reset-btn" onclick="resetAll()">Сбросить</button>
+    </div>
+    <div class="big-score">
+      <div class="big-score-n" id="big-pct">0%</div>
+      <div class="big-score-l">точность в тестах</div>
+    </div>
+    <div class="stat-grid" id="stat-grid"></div>
+    <h3 style="font-size:16px;margin-bottom:12px">Достижения</h3>
+    <div class="badges-grid" id="badges-grid"></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nb on" onclick="go('home')"><span class="ni">🏠</span><span class="nl">Главная</span></button>
+  <button class="nb" onclick="go('program')"><span class="ni">📅</span><span class="nl">Программа</span></button>
+  <button class="nb" onclick="go('quiz')"><span class="ni">✏️</span><span class="nl">Тест</span></button>
+  <button class="nb" onclick="go('progress')"><span class="ni">📊</span><span class="nl">Прогресс</span></button>
+</nav>
+
+<!-- Modal: add words -->
+<div class="modal-bg hide" id="add-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3>Добавить слово</h3>
+    <p style="font-size:13px;color:var(--ts);margin-bottom:14px">Добавь своё слово или фразу в программу</p>
+    <input class="modal-input" id="m-en" placeholder="Английский (например: absolutely)">
+    <input class="modal-input" id="m-ru" placeholder="Русский (например: абсолютно)">
+    <input class="modal-input" id="m-ex" placeholder="Пример на английском">
+    <input class="modal-input" id="m-exru" placeholder="Перевод примера">
+    <input class="modal-input" id="m-em" placeholder="Эмодзи 🎯" style="width:80px">
+    <div id="m-day-label" style="font-size:13px;color:var(--ts);margin:8px 0 4px">Добавить в день:</div>
+    <select class="modal-input" id="m-day" style="width:auto"></select>
+    <button class="btn-start" style="margin-top:12px" onclick="saveCustomWord()">Добавить ✓</button>
+  </div>
+</div>
+
+<div class="xp-pop" id="xp-pop">+10 XP ✨</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════ VOCABULARY ══════════════ */
+const V=[
+  {id:1,en:"Nowadays",ru:"В наши дни",ex:"Nowadays everyone uses smartphones.",exru:"В наши дни все пользуются смартфонами.",em:"📱",cat:"time",blank:"___ everyone uses smartphones.",ans:"nowadays"},
+  {id:2,en:"Not a big deal",ru:"Не страшно / Пустяки",ex:"Don't worry, it's not a big deal!",exru:"Не переживай, это пустяки!",em:"🤷",cat:"phrases",blank:"Don't worry, it's not a big ___!",ans:"deal"},
+  {id:3,en:"I'm going to…",ru:"Я собираюсь…",ex:"I'm going to cook dinner tonight.",exru:"Я собираюсь приготовить ужин сегодня.",em:"📅",cat:"grammar",blank:"I'm going to ___ dinner tonight.",ans:"cook"},
+  {id:4,en:"Weird",ru:"Странный",ex:"That was a really weird dream.",exru:"Это был очень странный сон.",em:"😵",cat:"adjectives",blank:"That was a really ___ dream.",ans:"weird"},
+  {id:5,en:"To make the bed",ru:"Застилать постель",ex:"I always make the bed before leaving.",exru:"Я всегда застилаю постель перед выходом.",em:"🛏️",cat:"daily",blank:"I always make the ___ before leaving.",ans:"bed"},
+  {id:6,en:"Enough",ru:"Достаточно",ex:"I've had enough coffee today.",exru:"Я выпила сегодня достаточно кофе.",em:"✅",cat:"common",blank:"I've had ___ coffee today.",ans:"enough"},
+  {id:7,en:"It's not enough",ru:"Этого недостаточно",ex:"One hour of sleep is not enough.",exru:"Одного часа сна недостаточно.",em:"❌",cat:"phrases",blank:"One hour of sleep is not ___.",ans:"enough"},
+  {id:8,en:"To share",ru:"Делить / Разделять",ex:"We shared the pizza between us.",exru:"Мы разделили пиццу между собой.",em:"🤝",cat:"verbs",blank:"We ___ the pizza between us.",ans:"shared"},
+  {id:9,en:"To share the same opinion",ru:"Разделять одинаковое мнение",ex:"We share the same opinion on this.",exru:"Мы разделяем одинаковое мнение по этому вопросу.",em:"🗣️",cat:"phrases",blank:"We share the same ___ on this.",ans:"opinion"},
+  {id:10,en:"Abundance",ru:"Изобилие / Достаток",ex:"There was an abundance of fresh fruit.",exru:"На рынке было изобилие свежих фруктов.",em:"🌸",cat:"nouns",blank:"There was an ___ of fresh fruit.",ans:"abundance"},
+  {id:11,en:"To be scared of",ru:"Бояться чего-то",ex:"I'm scared of flying at night.",exru:"Я боюсь летать ночью.",em:"😱",cat:"emotions",blank:"I'm ___ of flying at night.",ans:"scared"},
+  {id:12,en:"It was foggy / windy",ru:"Было туманно / ветрено",ex:"It was really foggy this morning.",exru:"Сегодня утром было очень туманно.",em:"🌫️",cat:"weather",blank:"It was really ___ this morning.",ans:"foggy"},
+  {id:13,en:"To pay attention",ru:"Обращать внимание",ex:"Please pay attention to the instructions.",exru:"Пожалуйста, обратите внимание на инструкции.",em:"👀",cat:"verbs",blank:"Please ___ attention to the instructions.",ans:"pay"},
+  {id:14,en:"To find out",ru:"Узнавать / Выяснять",ex:"I need to find out what time it closes.",exru:"Мне нужно узнать, во сколько закрывается.",em:"🔍",cat:"verbs",blank:"I need to ___ out what time it closes.",ans:"find"},
+  {id:15,en:"Exchange",ru:"Обмен",ex:"We did a language exchange together.",exru:"Мы сделали языковой обмен.",em:"🔄",cat:"nouns",blank:"We did a language ___ together.",ans:"exchange"},
+  {id:16,en:"To look after",ru:"Присматривать / Заботиться",ex:"Can you look after my cat this weekend?",exru:"Ты можешь присмотреть за моей кошкой?",em:"🐱",cat:"verbs",blank:"Can you ___ after my cat?",ans:"look"},
+  {id:17,en:"The world is your oyster",ru:"Весь мир у твоих ног",ex:"You just graduated — the world is your oyster!",exru:"Ты окончила учёбу — весь мир у твоих ног!",em:"🦪",cat:"idioms",blank:"The world is your ___!",ans:"oyster"},
+  {id:18,en:"To work out",ru:"Тренироваться",ex:"I work out three times a week.",exru:"Я тренируюсь три раза в неделю.",em:"💪",cat:"daily",blank:"I ___ out three times a week.",ans:"work"},
+  {id:19,en:"Headache",ru:"Головная боль",ex:"I have a terrible headache today.",exru:"У меня сегодня ужасная головная боль.",em:"🤕",cat:"health",blank:"I have a terrible ___ today.",ans:"headache"},
+  {id:20,en:"In a row",ru:"Подряд",ex:"I watched three episodes in a row.",exru:"Я посмотрела три серии подряд.",em:"📆",cat:"time",blank:"I watched three episodes in a ___.",ans:"row"},
+  {id:21,en:"Hangover",ru:"Похмелье",ex:"I had a terrible hangover after the party.",exru:"После вечеринки у меня было ужасное похмелье.",em:"🍺",cat:"daily",blank:"I had a terrible ___ after the party.",ans:"hangover"},
+  {id:22,en:"Doubts",ru:"Сомнения",ex:"I have some doubts about this plan.",exru:"У меня есть сомнения насчёт этого плана.",em:"🤔",cat:"emotions",blank:"I have some ___ about this plan.",ans:"doubts"},
+  {id:23,en:"It took me…",ru:"Это заняло у меня…",ex:"It took me two hours to finish.",exru:"У меня ушло два часа на это.",em:"⏰",cat:"phrases",blank:"It ___ me two hours to finish.",ans:"took"},
+  {id:24,en:"Me neither",ru:"Я тоже нет",ex:"— I don't like Mondays. — Me neither!",exru:"— Я не люблю понедельники. — Я тоже нет!",em:"🙅",cat:"phrases",blank:"— I don't like horror films. — Me ___!",ans:"neither"},
+  {id:25,en:"Experience",ru:"Опыт / Впечатление",ex:"Travelling alone was an amazing experience.",exru:"Путешествие в одиночку было удивительным опытом.",em:"🌟",cat:"nouns",blank:"Travelling alone was an amazing ___.",ans:"experience"},
+  {id:26,en:"Incredible",ru:"Невероятный",ex:"The view from the top was absolutely incredible.",exru:"Вид с вершины был абсолютно невероятным.",em:"🤩",cat:"adjectives",blank:"The view was absolutely ___.",ans:"incredible"},
+  {id:27,en:"Direct flight",ru:"Прямой рейс",ex:"We booked a direct flight to Barcelona.",exru:"Мы забронировали прямой рейс в Барселону.",em:"✈️",cat:"travel",blank:"We booked a ___ flight to Barcelona.",ans:"direct"},
+  {id:28,en:"With a layover",ru:"С пересадкой",ex:"The ticket was cheaper but with a layover in Dubai.",exru:"Билет был дешевле, но с пересадкой в Дубае.",em:"🛑",cat:"travel",blank:"The ticket had a ___ in Dubai.",ans:"layover"},
+  {id:29,en:"Tap water",ru:"Вода из-под крана",ex:"Is the tap water safe to drink here?",exru:"Здесь можно пить воду из-под крана?",em:"🚰",cat:"travel",blank:"Is the ___ water safe to drink here?",ans:"tap"},
+  {id:30,en:"Whale",ru:"Кит",ex:"We saw a whale jumping out of the water!",exru:"Мы видели кита, который выпрыгнул из воды!",em:"🐋",cat:"nature",blank:"We saw a ___ jumping out of the water!",ans:"whale"},
+  {id:31,en:"Winery",ru:"Винодельня",ex:"We went on a tour of a beautiful winery.",exru:"Мы съездили на экскурсию на красивую винодельню.",em:"🍷",cat:"travel",blank:"We went on a tour of a beautiful ___.",ans:"winery"},
+  {id:32,en:"I'm not gonna have dinner",ru:"Я не буду ужинать",ex:"I'm not gonna have dinner — I'm still full.",exru:"Я не буду ужинать — я всё ещё сыта.",em:"🍽️",cat:"phrases",blank:"I'm not gonna have ___.",ans:"dinner"},
+  {id:33,en:"I'm not sure yet",ru:"Я ещё не уверена",ex:"— Are you coming? — I'm not sure yet.",exru:"— Ты придёшь? — Я ещё не уверена.",em:"🤷",cat:"phrases",blank:"I'm not ___ yet.",ans:"sure"},
+  {id:34,en:"Therapist",ru:"Психотерапевт",ex:"Seeing a therapist really helped me.",exru:"Поход к психотерапевту мне очень помог.",em:"🛋️",cat:"health",blank:"Seeing a ___ really helped me.",ans:"therapist"},
+  {id:35,en:"To get closure",ru:"Поставить точку / Отпустить",ex:"I needed to talk to him to get closure.",exru:"Мне нужно было поговорить с ним, чтобы поставить точку.",em:"🔐",cat:"emotions",blank:"I needed to talk to him to get ___.",ans:"closure"},
+  {id:36,en:"I felt like my eyes were going to fall out",ru:"Казалось, глаза сейчас выпадут (от усталости)",ex:"I worked till 3am — my eyes were going to fall out!",exru:"Я работала до 3 утра — казалось, глаза выпадут!",em:"😵",cat:"phrases",blank:"I was so tired — my eyes were going to ___ out.",ans:"fall"},
+  {id:37,en:"Accountant",ru:"Бухгалтер",ex:"My accountant helped me file my taxes.",exru:"Мой бухгалтер помог мне подать декларацию.",em:"💼",cat:"work",blank:"My ___ helped me file my taxes.",ans:"accountant"},
+  {id:38,en:"I have to go",ru:"Мне нужно идти",ex:"Sorry, I have to go — my meeting starts now.",exru:"Извини, мне нужно идти — совещание начинается.",em:"🚪",cat:"phrases",blank:"Sorry, I have to ___.",ans:"go"},
+  {id:39,en:"It's up to you",ru:"Это зависит от тебя / Решай сам",ex:"— Where should we eat? — It's up to you!",exru:"— Где поедим? — Решай сам!",em:"👆",cat:"phrases",blank:"— Where should we go? — It's ___ to you!",ans:"up"},
+  {id:40,en:"Outdoors",ru:"На открытом воздухе",ex:"I love spending time outdoors in summer.",exru:"Я люблю проводить время на свежем воздухе летом.",em:"🌿",cat:"daily",blank:"I love spending time ___ in summer.",ans:"outdoors"},
+  {id:41,en:"Unexpected",ru:"Неожиданный",ex:"What an unexpected surprise to see you here!",exru:"Какой неожиданный сюрприз видеть тебя здесь!",em:"😲",cat:"adjectives",blank:"What an ___ surprise to see you!",ans:"unexpected"},
+  {id:42,en:"Convenient",ru:"Удобный",ex:"The hotel was very convenient — right in the centre.",exru:"Отель был очень удобен — прямо в центре.",em:"👍",cat:"adjectives",blank:"The hotel was very ___ — right in the centre.",ans:"convenient"},
+  {id:43,en:"Cheap / The cheapest",ru:"Дешёвый / Самый дешёвый",ex:"This is the cheapest option we have.",exru:"Это самый дешёвый вариант.",em:"💰",cat:"adjectives",blank:"This is the ___ option we have.",ans:"cheapest"},
+  {id:44,en:"Clementine",ru:"Мандарин",ex:"I eat a clementine every morning for vitamin C.",exru:"Я ем мандарин каждое утро ради витамина C.",em:"🍊",cat:"food",blank:"I eat a ___ every morning for vitamin C.",ans:"clementine"},
+  {id:45,en:"To throw away",ru:"Выбрасывать",ex:"Don't throw away those leftovers — I'll eat them!",exru:"Не выбрасывай эти остатки — я их съем!",em:"🗑️",cat:"verbs",blank:"Don't ___ away those leftovers!",ans:"throw"},
+  {id:46,en:"Pedestrian",ru:"Пешеход",ex:"Pedestrians have the right of way here.",exru:"Пешеходы имеют право проезда здесь.",em:"🚶",cat:"nouns",blank:"___ have the right of way here.",ans:"pedestrians"},
+  {id:47,en:"Invitation",ru:"Приглашение",ex:"I got an invitation to her wedding!",exru:"Я получила приглашение на её свадьбу!",em:"💌",cat:"nouns",blank:"I got an ___ to her wedding!",ans:"invitation"},
+  {id:48,en:"So that's why",ru:"Вот поэтому / Вот почему",ex:"She trains every day. So that's why she looks so fit!",exru:"Она тренируется каждый день. Вот поэтому!",em:"💡",cat:"phrases",blank:"She trains every day. So that's ___ she's so fit!",ans:"why"},
+  {id:49,en:"I'm in a good / bad mood",ru:"Я в хорошем / плохом настроении",ex:"I'm in a really good mood today!",exru:"Сегодня я в очень хорошем настроении!",em:"😊",cat:"emotions",blank:"I'm in a really good ___ today!",ans:"mood"},
+  {id:50,en:"Mortgage",ru:"Ипотека",ex:"We finally paid off our mortgage!",exru:"Мы наконец выплатили ипотеку!",em:"🏠",cat:"money",blank:"We finally paid off our ___!",ans:"mortgage"},
+  {id:51,en:"Oatmeal",ru:"Овсяная каша",ex:"I have oatmeal with berries every morning.",exru:"Каждое утро я ем овсянку с ягодами.",em:"🥣",cat:"food",blank:"I have ___ with berries every morning.",ans:"oatmeal"},
+  {id:52,en:"Beans",ru:"Фасоль / Бобы",ex:"I love beans in Mexican food.",exru:"Я люблю фасоль в мексиканской еде.",em:"🫘",cat:"food",blank:"I love ___ in Mexican food.",ans:"beans"},
+  {id:53,en:"To expect",ru:"Ожидать",ex:"I didn't expect to see you here!",exru:"Я не ожидала тебя здесь встретить!",em:"🎯",cat:"verbs",blank:"I didn't ___ to see you here!",ans:"expect"},
+  {id:54,en:"To drop",ru:"Ронять / Уронить",ex:"I dropped my phone and cracked the screen.",exru:"Я уронила телефон и треснул экран.",em:"📱",cat:"verbs",blank:"I ___ my phone and cracked the screen.",ans:"dropped"},
+  {id:55,en:"Eye drops",ru:"Глазные капли",ex:"My eyes were so dry I needed eye drops.",exru:"Мои глаза были такими сухими, что нужны были капли.",em:"👁️",cat:"health",blank:"My eyes were dry — I needed ___ drops.",ans:"eye"},
+  {id:56,en:"Equipment",ru:"Оборудование / Снаряжение",ex:"We rented all the diving equipment.",exru:"Мы арендовали всё снаряжение для дайвинга.",em:"🔧",cat:"nouns",blank:"We rented all the diving ___.",ans:"equipment"},
+  {id:57,en:"Surgery",ru:"Операция",ex:"He had surgery on his knee last month.",exru:"В прошлом месяце ему сделали операцию на колене.",em:"🏥",cat:"health",blank:"He had ___ on his knee last month.",ans:"surgery"},
+  {id:58,en:"An amazing trip",ru:"Невероятная поездка",ex:"That was an amazing trip — I want to go back!",exru:"Это была невероятная поездка — хочу вернуться!",em:"🌍",cat:"travel",blank:"That was an ___ trip — I want to go back!",ans:"amazing"},
+  {id:59,en:"To appear",ru:"Появляться",ex:"A rainbow appeared after the rain.",exru:"После дождя появилась радуга.",em:"✨",cat:"verbs",blank:"A rainbow ___ after the rain.",ans:"appeared"},
+  {id:60,en:"House hunting",ru:"Поиск жилья",ex:"We've been house hunting for three months.",exru:"Мы занимаемся поиском жилья уже три месяца.",em:"🏡",cat:"home",blank:"We've been ___ hunting for three months.",ans:"house"},
+  {id:61,en:"Huge",ru:"Огромный",ex:"Their apartment is huge — three bedrooms!",exru:"Их квартира огромная — три спальни!",em:"🌊",cat:"adjectives",blank:"Their apartment is ___ — three bedrooms!",ans:"huge"},
+  {id:62,en:"Mashed potato",ru:"Картофельное пюре",ex:"Grandma's mashed potato is the best comfort food.",exru:"Бабушкино картофельное пюре — лучшая еда для души.",em:"🥔",cat:"food",blank:"Grandma's ___ potato is the best comfort food.",ans:"mashed"},
+  {id:63,en:"Corn",ru:"Кукуруза",ex:"I love grilled corn on the cob in summer.",exru:"Я обожаю жареную кукурузу летом.",em:"🌽",cat:"food",blank:"I love grilled ___ on the cob in summer.",ans:"corn"},
+  {id:64,en:"I didn't feel well",ru:"Мне было нехорошо",ex:"I didn't feel well yesterday so I stayed home.",exru:"Вчера мне было нехорошо, поэтому я осталась дома.",em:"🤒",cat:"health",blank:"I didn't feel ___ yesterday so I stayed home.",ans:"well"},
+  {id:65,en:"Pharmacy / Drug store",ru:"Аптека",ex:"Can you pick up some painkillers from the pharmacy?",exru:"Ты можешь купить обезболивающее в аптеке?",em:"💊",cat:"health",blank:"Can you pick up painkillers from the ___?",ans:"pharmacy"},
+  {id:66,en:"Decision",ru:"Решение",ex:"It was a difficult decision, but I don't regret it.",exru:"Это было трудное решение, но я не жалею.",em:"⚖️",cat:"nouns",blank:"It was a difficult ___, but I don't regret it.",ans:"decision"},
+  {id:67,en:"Curling iron",ru:"Щипцы для завивки",ex:"I burned my finger with the curling iron again!",exru:"Я снова обожгла палец щипцами для завивки!",em:"💇",cat:"daily",blank:"I burned my finger with the ___ iron.",ans:"curling"},
+  {id:68,en:"To spend time",ru:"Проводить время",ex:"I love spending time with my family on weekends.",exru:"Я люблю проводить время с семьёй по выходным.",em:"☀️",cat:"verbs",blank:"I love ___ time with my family.",ans:"spending"},
+  {id:69,en:"To be sick / ill",ru:"Болеть",ex:"I've been sick all week — just a cold.",exru:"Я болею всю неделю — просто простуда.",em:"🤧",cat:"health",blank:"I've been ___ all week — just a cold.",ans:"sick"},
+  {id:70,en:"Stay at home / Stay in",ru:"Оставаться дома",ex:"Let's stay in tonight and watch a movie.",exru:"Давай сегодня останемся дома и посмотрим фильм.",em:"🏠",cat:"phrases",blank:"Let's ___ in tonight and watch a movie.",ans:"stay"},
+  {id:71,en:"Salary",ru:"Зарплата",ex:"She got a salary raise after her promotion.",exru:"Она получила прибавку к зарплате после повышения.",em:"💵",cat:"work",blank:"She got a ___ raise after her promotion.",ans:"salary"},
+  {id:72,en:"Twice a week / once a week",ru:"Дважды / раз в неделю",ex:"I go to the gym twice a week.",exru:"Я хожу в зал дважды в неделю.",em:"📊",cat:"time",blank:"I go to the gym ___ a week.",ans:"twice"},
+  {id:73,en:"To realise",ru:"Осознать / Понять",ex:"I suddenly realised I left my keys at home.",exru:"Я вдруг осознала, что оставила ключи дома.",em:"💡",cat:"verbs",blank:"I suddenly ___ I left my keys at home.",ans:"realised"},
+  {id:74,en:"Solution",ru:"Решение / Выход",ex:"Every problem has a solution.",exru:"У каждой проблемы есть решение.",em:"🔓",cat:"nouns",blank:"Every problem has a ___.",ans:"solution"},
+  {id:75,en:"To participate",ru:"Участвовать",ex:"Everyone is encouraged to participate.",exru:"Всех призывают участвовать.",em:"🙋",cat:"verbs",blank:"Everyone is encouraged to ___.",ans:"participate"},
+  {id:76,en:"Recharge your batteries",ru:"Восстановить силы",ex:"I need a holiday to recharge my batteries.",exru:"Мне нужен отпуск, чтобы восстановить силы.",em:"🔋",cat:"idioms",blank:"I need a holiday to recharge my ___.",ans:"batteries"},
+  {id:77,en:"Boost of energy",ru:"Заряд энергии",ex:"A morning walk gives me a boost of energy.",exru:"Утренняя прогулка даёт мне заряд энергии.",em:"⚡",cat:"phrases",blank:"A morning walk gives me a ___ of energy.",ans:"boost"},
+  {id:78,en:"Nothing special",ru:"Ничего особенного",ex:"— How was the party? — Nothing special.",exru:"— Как вечеринка? — Ничего особенного.",em:"😐",cat:"phrases",blank:"— How was it? — Nothing ___.",ans:"special"},
+  {id:79,en:"Definitely",ru:"Точно / Определённо",ex:"I'm definitely coming to your birthday!",exru:"Я точно приду на твой день рождения!",em:"✅",cat:"common",blank:"I'm ___ coming to your birthday!",ans:"definitely"},
+  {id:80,en:"Breathtaking",ru:"Захватывающий дух",ex:"The view from the cliff was breathtaking.",exru:"Вид с обрыва захватывал дух.",em:"🌄",cat:"adjectives",blank:"The view from the cliff was ___.",ans:"breathtaking"},
+  {id:81,en:"Disgusting",ru:"Отвратительный",ex:"That smell is absolutely disgusting!",exru:"Этот запах абсолютно отвратительный!",em:"🤢",cat:"adjectives",blank:"That smell is absolutely ___!",ans:"disgusting"},
+  {id:82,en:"To be sad / upset / annoyed",ru:"Грустить / Расстраиваться",ex:"I was really upset when they cancelled the trip.",exru:"Я была очень расстроена, когда отменили поездку.",em:"😤",cat:"emotions",blank:"I was really ___ when they cancelled the trip.",ans:"upset"},
+  {id:83,en:"To be excited about",ru:"Быть в восторге / Предвкушать",ex:"I'm so excited about our holiday next month!",exru:"Я так рада предстоящему отпуску!",em:"🎉",cat:"emotions",blank:"I'm so ___ about our holiday!",ans:"excited"},
+  {id:84,en:"Disappointing",ru:"Разочаровывающий",ex:"The film was really disappointing.",exru:"Фильм был реально разочаровывающим.",em:"😞",cat:"adjectives",blank:"The film was really ___.",ans:"disappointing"},
+  {id:85,en:"Can you take a picture of me?",ru:"Ты не мог бы меня сфотографировать?",ex:"Excuse me, can you take a picture of me?",exru:"Извините, вы не могли бы меня сфотографировать?",em:"📸",cat:"phrases",blank:"Can you ___ a picture of me?",ans:"take"},
+  {id:86,en:"Headphones",ru:"Наушники",ex:"I always wear headphones on the metro.",exru:"В метро я всегда ношу наушники.",em:"🎧",cat:"daily",blank:"I always wear ___ on the metro.",ans:"headphones"},
+  {id:87,en:"To argue",ru:"Спорить / Ссориться",ex:"We argued about where to go for dinner.",exru:"Мы поспорили, куда пойти на ужин.",em:"💬",cat:"emotions",blank:"We ___ about where to go for dinner.",ans:"argued"},
+  {id:88,en:"Generous",ru:"Щедрый",ex:"She's very generous — always brings gifts.",exru:"Она очень щедрая — всегда приносит подарки.",em:"🎁",cat:"adjectives",blank:"She's very ___ — always brings gifts.",ans:"generous"},
+  {id:89,en:"To water plants",ru:"Поливать растения",ex:"Don't forget to water the plants while I'm away.",exru:"Не забудь полить растения, пока меня нет.",em:"🌱",cat:"daily",blank:"Don't forget to ___ the plants.",ans:"water"},
+  {id:90,en:"Affectionate",ru:"Нежный / Ласковый",ex:"She's very affectionate — always giving hugs.",exru:"Она очень ласковая — всегда обнимает.",em:"💕",cat:"adjectives",blank:"She's very ___ — always giving hugs.",ans:"affectionate"},
+  {id:91,en:"It depends on the weather",ru:"Зависит от погоды",ex:"— Barbecue? — It depends on the weather.",exru:"— Барбекю? — Зависит от погоды.",em:"🌤️",cat:"phrases",blank:"It ___ on the weather.",ans:"depends"},
+  {id:92,en:"To annoy",ru:"Раздражать",ex:"It really annoys me when people are late.",exru:"Меня очень раздражает, когда люди опаздывают.",em:"😠",cat:"emotions",blank:"It really ___ me when people are late.",ans:"annoys"},
+  {id:93,en:"Ripe",ru:"Спелый",ex:"These strawberries are perfectly ripe.",exru:"Эта клубника идеально спелая.",em:"🍓",cat:"food",blank:"These strawberries are perfectly ___.",ans:"ripe"},
+  {id:94,en:"Sunrise",ru:"Восход солнца",ex:"We woke up early to watch the sunrise by the ocean.",exru:"Мы проснулись рано, чтобы посмотреть восход у океана.",em:"🌅",cat:"nature",blank:"We woke up early to watch the ___ by the ocean.",ans:"sunrise"},
+  {id:95,en:"Sunset",ru:"Закат",ex:"The sunset over the beach was beautiful.",exru:"Закат над пляжем был красивым.",em:"🌇",cat:"nature",blank:"The ___ over the beach was beautiful.",ans:"sunset"},
+  {id:96,en:"Collarbone",ru:"Ключица",ex:"He broke his collarbone while playing football.",exru:"Он сломал ключицу, играя в футбол.",em:"🦴",cat:"health",blank:"He broke his ___ while playing football.",ans:"collarbone"},
+  {id:97,en:"To ride a horse",ru:"Кататься на лошади",ex:"I learned how to ride a horse as a child.",exru:"Я научилась ездить верхом в детстве.",em:"🐎",cat:"nature",blank:"I learned how to ___ a horse as a child.",ans:"ride"},
+  {id:98,en:"It pushes you to…",ru:"Это побуждает / заставляет тебя…",ex:"Competition pushes you to improve faster.",exru:"Конкуренция побуждает тебя развиваться быстрее.",em:"🎯",cat:"phrases",blank:"Competition ___ you to improve faster.",ans:"pushes"},
+  {id:99,en:"Cockroach",ru:"Таракан",ex:"I saw a cockroach in the kitchen last night!",exru:"Вчера вечером я увидела таракана на кухне!",em:"🪳",cat:"nature",blank:"I saw a ___ in the kitchen last night!",ans:"cockroach"},
+  {id:100,en:"Flavour",ru:"Вкус / Аромат",ex:"This ice cream has a delicious vanilla flavour.",exru:"У этого мороженого восхитительный ванильный вкус.",em:"🍦",cat:"food",blank:"This ice cream has a delicious vanilla ___.",ans:"flavour"},
+  {id:101,en:"Recently",ru:"Недавно",ex:"I have recently started horse riding classes.",exru:"Я недавно начала заниматься верховой ездой.",em:"📅",cat:"time",blank:"I have ___ started horse riding classes.",ans:"recently"},
+  {id:102,en:"To take part in",ru:"Принимать участие в",ex:"She took part in a charity run last weekend.",exru:"Она приняла участие в благотворительном забеге.",em:"🏆",cat:"verbs",blank:"She took ___ in a charity run.",ans:"part"},
+  {id:103,en:"To be tipsy",ru:"Быть слегка выпившим / навеселе",ex:"After two glasses of wine, she was a little tipsy.",exru:"После двух бокалов вина она была слегка навеселе.",em:"🥂",cat:"daily",blank:"After two glasses of wine, she was a little ___.",ans:"tipsy"},
+  {id:104,en:"To beg",ru:"Умолять / Просить",ex:"My dog always begs for food at dinner time.",exru:"Моя собака всегда выпрашивает еду во время ужина.",em:"🙏",cat:"verbs",blank:"My dog always ___ for food at dinner.",ans:"begs"},
+  {id:105,en:"To be jealous",ru:"Ревновать / Завидовать",ex:"She's jealous of her friend's success.",exru:"Она завидует успеху подруги.",em:"💚",cat:"emotions",blank:"She's ___ of her friend's success.",ans:"jealous"},
+  {id:106,en:"Till (= until)",ru:"До",ex:"I'll stay here till 6 p.m.",exru:"Я останусь здесь до 6 вечера.",em:"⏰",cat:"grammar",blank:"I'll stay here ___ 6 p.m.",ans:"till"},
+  {id:107,en:"Just (= only just)",ru:"Только что",ex:"I've just finished my workout.",exru:"Я только что закончила тренировку.",em:"⚡",cat:"common",blank:"I've ___ finished my workout.",ans:"just"},
+  {id:108,en:"To get to know",ru:"Познакомиться поближе",ex:"It takes time to get to know someone.",exru:"Нужно время, чтобы узнать человека поближе.",em:"👋",cat:"verbs",blank:"It takes time to ___ to know someone.",ans:"get"},
+  {id:109,en:"To be worth it",ru:"Стоить того",ex:"The hike was tough, but it was totally worth it.",exru:"Поход был трудным, но он того стоил.",em:"⭐",cat:"phrases",blank:"The hike was tough, but it was totally ___ it.",ans:"worth"},
+  {id:110,en:"Renovation",ru:"Ремонт",ex:"Our apartment is under renovation for two months.",exru:"Наша квартира на ремонте уже два месяца.",em:"🔨",cat:"home",blank:"Our apartment is under ___ for two months.",ans:"renovation"},
+  {id:111,en:"Crayfish",ru:"Речной рак",ex:"We had crayfish for dinner — a summer tradition!",exru:"На ужин у нас были раки — летняя традиция!",em:"🦞",cat:"food",blank:"We had ___ for dinner — a summer tradition!",ans:"crayfish"},
+  {id:112,en:"Mostly",ru:"В основном",ex:"I mostly work from home, but go to the office on Fridays.",exru:"Я в основном работаю из дома, но по пятницам в офисе.",em:"🏠",cat:"common",blank:"I ___ work from home.",ans:"mostly"},
+  {id:113,en:"Childhood dream",ru:"Детская мечта",ex:"Travelling the world was my childhood dream.",exru:"Путешествовать по миру было моей детской мечтой.",em:"⭐",cat:"nouns",blank:"Travelling the world was my ___ dream.",ans:"childhood"},
+  {id:114,en:"To be impressed by",ru:"Быть впечатлённым",ex:"I was so impressed by her French skills.",exru:"Я была так впечатлена её знанием французского.",em:"😮",cat:"emotions",blank:"I was so ___ by her French skills.",ans:"impressed"},
+  {id:115,en:"Argument",ru:"Ссора / Спор",ex:"We had a big argument but made up the next day.",exru:"У нас была серьёзная ссора, но мы помирились.",em:"⚡",cat:"nouns",blank:"We had a big ___ but made up the next day.",ans:"argument"},
+  {id:116,en:"With a view on the mountains",ru:"С видом на горы",ex:"We got a room with a view on the mountains.",exru:"Нам досталась комната с видом на горы.",em:"🏔️",cat:"travel",blank:"We got a room with a ___ on the mountains.",ans:"view"},
+  {id:117,en:"Childhood dream",ru:"Детская мечта",ex:"Learning to surf was my childhood dream.",exru:"Научиться серфингу было моей детской мечтой.",em:"🌊",cat:"nouns",blank:"Learning to surf was my ___ dream.",ans:"childhood"},
+  {id:118,en:"Ant",ru:"Муравей",ex:"An ant can carry 50 times its own weight.",exru:"Муравей может нести вес в 50 раз больше своего.",em:"🐜",cat:"nature",blank:"An ___ can carry 50 times its own weight.",ans:"ant"},
+  {id:119,en:"Deer",ru:"Олень",ex:"We saw a deer in the forest early in the morning.",exru:"Рано утром мы увидели оленя в лесу.",em:"🦌",cat:"nature",blank:"We saw a ___ in the forest early in the morning.",ans:"deer"},
+  {id:120,en:"To send",ru:"Отправлять",ex:"Can you send me the photos from the trip?",exru:"Ты можешь отправить мне фотографии с поездки?",em:"📤",cat:"verbs",blank:"Can you ___ me the photos from the trip?",ans:"send"},
+  {id:121,en:"Residency",ru:"Место жительства / Резидентство",ex:"She applied for residency after 5 years there.",exru:"Она подала на резидентство после 5 лет жизни там.",em:"🏙️",cat:"nouns",blank:"She applied for ___ after 5 years there.",ans:"residency"},
+  {id:122,en:"Annoy",ru:"Раздражать / Надоедать",ex:"It really annoys me when people are late.",exru:"Меня очень раздражает, когда люди опаздывают.",em:"😤",cat:"verbs",blank:"Stop it — you're starting to ___ me!",ans:"annoy"},
+  {id:123,en:"Annoying",ru:"Раздражающий / Надоедливый",ex:"The noise outside is really annoying.",exru:"Шум снаружи очень раздражающий.",em:"🙉",cat:"adjectives",blank:"The noise outside is really ___.",ans:"annoying"},
+  {id:124,en:"Main character",ru:"Главный герой",ex:"She is the main character in the movie.",exru:"Она главный герой в этом фильме.",em:"🎬",cat:"nouns",blank:"She is the ___ character in the movie.",ans:"main"},
+  {id:125,en:"Fancy",ru:"Шикарный / Модный",ex:"They stayed in a fancy hotel near the beach.",exru:"Они остановились в шикарном отеле рядом с пляжем.",em:"✨",cat:"adjectives",blank:"They stayed in a ___ hotel near the beach.",ans:"fancy"},
+  {id:126,en:"To receive",ru:"Получать",ex:"I received a lovely message from my friend.",exru:"Я получила милое сообщение от подруги.",em:"📬",cat:"verbs",blank:"I ___ a lovely message from my friend.",ans:"received"},
+  {id:127,en:"Safe",ru:"Безопасный",ex:"Is it safe to swim here?",exru:"Здесь безопасно купаться?",em:"🛡️",cat:"adjectives",blank:"Is it ___ to swim here?",ans:"safe"},
+  {id:128,en:"Calm",ru:"Спокойный",ex:"The sea was so calm — perfect for swimming.",exru:"Море было таким спокойным — идеально для плавания.",em:"🧘",cat:"adjectives",blank:"The sea was so ___ — perfect for swimming.",ans:"calm"},
+  {id:129,en:"Along",ru:"Вдоль / По",ex:"We walked along the river for an hour.",exru:"Мы шли вдоль реки целый час.",em:"🛤️",cat:"common",blank:"We walked ___ the river for an hour.",ans:"along"},
+  {id:130,en:"Give to charity",ru:"Пожертвовать / Отдать на благотворительность",ex:"I give old clothes to charity instead of throwing away.",exru:"Я отдаю старую одежду на благотворительность.",em:"❤️",cat:"phrases",blank:"I give old clothes to ___ instead of throwing away.",ans:"charity"}
+];
+
+/* ══ CUSTOM WORDS (from localStorage) ══ */
+function loadCustomWords(){
+  try{ return JSON.parse(localStorage.getItem('custom_words')||'[]'); }catch(e){return [];}
+}
+function allWords(){return [...V,...loadCustomWords()];}
+
+/* ══ MNEMONICS ══ */
+const MN={
+  1:"НАУ = сейчас, ДЕЙЗ = дни → «В эти нынешние дни»",
+  2:"ДИЛ = дело → «Не большое ДЕЛО — пустяки!»",
+  4:"ВИРД → как ВИРУС, который заражает странностью",
+  5:"МЭЙк БЭД → МОЙ БЭД (моя постель) — сделай её!",
+  6:"ИНАФ → И НАФталина достаточно от моли",
+  11:"СКЭА(р)Д → СКРИПит дверь — и ты боишься",
+  17:"ОЙСТЕР → ОЙ, СТЁРЛА все границы — устрица открывает мир",
+  18:"ВЁРК АУТ → ВКАЛЫВАЙ на ВЫХОД",
+  19:"ХЭДЭЙК → ГОЛОВА (head) НОЕТ (ache)",
+  20:"РОУ → РЯД → в ряд стоят = подряд",
+  21:"ХЭНГОВЕР → голова ЗАВИСЛА (hang over) после вечеринки",
+  23:"ИТ ТУК МИ → ЭТО ТЮКНУЛО меня по времени",
+  26:"ИНКРЕДИБЛ → НЕ КРЕДИТ-бл = невероятно без кредита",
+  27:"ДАЙРЕКТ → ДИРЕКТОР летит прямо без пересадок",
+  28:"ЛЭЙОВЕР → ЛЕЖИШЬ (lay) в аэропорту на пересадке",
+  29:"ТЭП → ТАПОЧКИ мокнут от воды из крана",
+  30:"УЭЙЛ → ВЕЛ-ИКАН кит",
+  35:"КЛОУЖЕР → КЛОЗ (close) дверь прошлого = поставить точку",
+  37:"АКАУНТЕНТ → АККАУНТ считает деньги",
+  39:"АП ТУ ЮУ → мяч у тебя — решай!",
+  40:"АУТ ДОРЗ → АУТ через ДВЕРИ (doors) — на улицу",
+  43:"ЧИП → ЧИП и Дейл — мультяшки за дёшево",
+  44:"КЛЕМЕНТАЙН → КЛЕМЕНТ взял мандарин",
+  49:"МУД → настроение, как mood в английских песнях",
+  50:"МОРГИДЖ → МОРГ для денег — ипотека убивает бюджет 😅",
+  52:"БИНЗ → МР. БИН обожает фасоль (beans)",
+  54:"ДРОП → ДРОПнуть телефон (геймерский термин)",
+  57:"СЁРДЖЕРИ → СЁРЖ РЕЖет = хирург режет",
+  59:"ЭППИР → А ПИР ЯВИЛСЯ! — вдруг появился",
+  61:"ХЬЮДЖ → ХЬЮСТОН, у нас ОГРОМНАЯ проблема!",
+  62:"МЭШТ → РАЗДАВЛЕННАЯ (mashed) картошка",
+  63:"КОРН → КОРоНа кукурузы",
+  65:"ФАРМЭСИ → ФАРМА = фармацевтика = аптека",
+  66:"ДИСИЖН → ДА или нет? = принять РЕШЕНИЕ",
+  67:"КЁРЛИНГ АЙРОН → КЁРЛИНГ для волос + утюг (iron)",
+  71:"СЭЛЭРИ → как СЕЛЬДЕРЕЙ (celery) — зарплата растёт",
+  73:"РИАЛАЙЗ → РЕАЛЬНО осознать что-то важное",
+  76:"РИ-ЧАРДЖ БЭТЕРИС → ЗАРЯДИТЬ батарейки снова",
+  77:"БУСТ → BOOST = турбо-ускорение энергии",
+  79:"ДЕФИНИТЛИ → звучит как «дефиниция» = точно определено",
+  80:"БРЭС-ТЕЙКИНГ → ДЫХАНИЕ БЕРЁТ (breath + taking)",
+  81:"ДИСГАСТИНГ → ДИС + ГАСТРИТ = отвратительно",
+  82:"АПСЕТ → АП (вверх) + СЕТ = всё перевернулось вверх дном",
+  83:"ЭКСАЙТЕД → зажги! (ЭКСА(й)Т = как на концерте)",
+  86:"ХЭДФОУНЗ → ХЭДФОН = на ГОЛОВУ (head)",
+  87:"АРГЬЮ → АРГУМЕНТИРОВАТЬ = спорить",
+  92:"ЭНОЙД → НОЕТ в ушах — annoy = ноет = раздражает",
+  93:"РАЙП → РАЙ-ское спелое яблоко",
+  94:"САНРАЙЗ → SUN (солнце) + RISE (подниматься)",
+  95:"САНСЕТ → SUN (солнце) + SET (садится)",
+  96:"КОЛЛЭБОУН → COLLAR (воротник) + BONE (кость у воротника)",
+  97:"РАЙД Э ХОРС → РАЙДЕР скачет на лошади",
+  99:"КОКРОУЧ → КОКА-ТАРАКАН пьёт Кока-Колу на кухне 🪳",
+  100:"ФЛЭЙВА → ФЛЕЙТА ВКУСА играет аромат",
+  103:"ТИПСИ → ТИПА СЫТАЯ от вина — навеселе",
+  104:"БЕГ → СОБАКА БЕЖИТ (бег) выпрашивать еду",
+  105:"ДЖЭЛАС → ЖЕЛТЕЕТ (yellow) от зависти",
+  106:"ТИЛ → ТИЛ-ЬКО ДО этого момента",
+  107:"ДЖАСТ → ДА-СТ = ТОЛЬКО ЧТО сделал",
+  109:"ВЁРТ ИТ → ВЁРТЕТЬ в руках = стоит того",
+  110:"РЕНОВЭЙШН → РЕНО поновить = сделать ремонт",
+  111:"КРЭЙФИШ → КРЕЙЗИ РЫБ-А = сумасшедший рак в реке",
+  112:"МОУСТЛИ → МОСТ-ЛИ = по большей части",
+  119:"ДИА → ДОРОГОЙ (dear) олень = deer",
+  123:"ЭННОЙИНГ → НОЕТ нон-стоп = раздражающий",
+  124:"МЭЙН КЭРЭКТЕР → ГЛАВНЫЙ персонаж (character)",
+  125:"ФЭНСИ → ФЭНТЕЗИ-класс = шикарно и с фантазией",
+  127:"СЭЙФ → СЕЙФ = самое безопасное место",
+  128:"КА(л)М → КАМЕНЬ спокойный",
+};
+
+/* ══ CATEGORY COLORS ══ */
+const CC={
+  time:['#FFF8E4','#F5C040'],phrases:['#FFE8F5','#D45890'],
+  grammar:['#EEE8FF','#7858D0'],adjectives:['#E8F5E8','#409858'],
+  daily:['#FFF3E4','#D07828'],verbs:['#E4F0FF','#4878C8'],
+  emotions:['#FFE4E4','#C84858'],weather:['#E4F0FF','#4898D0'],
+  travel:['#E4F5F0','#38907A'],health:['#FFE8E0','#C85840'],
+  food:['#EDFAE4','#50A038'],home:['#F5EFE0','#907840'],
+  work:['#E4E8FF','#5058A8'],money:['#FFF5D8','#B08C28'],
+  nature:['#E8F8E4','#408038'],nouns:['#F5E8FF','#8848C0'],
+  common:['#F0EEEA','#787060'],idioms:['#FFE8D8','#B86028']
+};
+
+/* ══ DAY PLAN ══ */
+const DAY_PLAN=[
+  {day:1,title:"Разговорные основы",ids:[1,2,3,6,7,8,9,10,24,79]},
+  {day:2,title:"Эмоции и чувства",ids:[11,22,35,49,82,83,84,87,92,105]},
+  {day:3,title:"Путешествия 1",ids:[27,28,29,31,58,116,47,33,39,48]},
+  {day:4,title:"Природа и животные",ids:[30,94,95,97,99,118,119,98,80,93]},
+  {day:5,title:"Здоровье",ids:[19,55,57,64,65,69,96,34,21,72]},
+  {day:6,title:"Дом и быт",ids:[5,18,40,60,67,70,86,89,103,110]},
+  {day:7,title:"Описание людей",ids:[4,26,41,42,61,88,90,91,127,128]},
+  {day:8,title:"Еда и вкусы",ids:[44,51,52,62,63,93,100,111,125,130]},
+  {day:9,title:"Работа и деньги",ids:[37,50,53,66,71,74,75,113,114,121]},
+  {day:10,title:"Выражения и фразы",ids:[23,36,38,68,73,76,77,78,85,98]},
+  {day:11,title:"Время и частота",ids:[20,72,101,106,107,112,129,15,25,17]},
+  {day:12,title:"Новые слова 1",ids:[122,123,124,125,103,104,105,108,109,115]},
+  {day:13,title:"Глаголы действия",ids:[13,14,16,45,54,59,102,108,120,126]},
+  {day:14,title:"Последний уровень",ids:[43,46,56,81,116,117,118,119,128,129]},
+  {day:15,title:"Повторение и закрепление",ids:[1,11,27,49,76,80,88,94,109,124]}
+];
+
+/* ══ LEVELS & BADGES ══ */
+const LEVELS=[
+  {lv:1,name:"Новичок",icon:"🌱",xp:0},
+  {lv:2,name:"Любопытный",icon:"🐣",xp:100},
+  {lv:3,name:"Старатель",icon:"📖",xp:250},
+  {lv:4,name:"Практик",icon:"🎯",xp:450},
+  {lv:5,name:"Знаток",icon:"🌟",xp:700},
+  {lv:6,name:"Уверенный",icon:"🔥",xp:1000},
+  {lv:7,name:"Эксперт",icon:"💎",xp:1500},
+  {lv:8,name:"Мастер",icon:"🏆",xp:2200},
+  {lv:9,name:"Виртуоз",icon:"👑",xp:3200},
+  {lv:10,name:"Легенда",icon:"⚡",xp:5000}
+];
+const BADGES=[
+  {id:'first',icon:'🌱',name:'Первый шаг',desc:'Правильный ответ впервые',check:g=>g.totalCorrect>=1},
+  {id:'b10',icon:'📚',name:'10 правильных',desc:'10 правильных ответов',check:g=>g.totalCorrect>=10},
+  {id:'b50',icon:'⭐',name:'50 правильных',desc:'50 правильных ответов',check:g=>g.totalCorrect>=50},
+  {id:'b100',icon:'🏆',name:'100 ответов',desc:'100 правильных ответов',check:g=>g.totalCorrect>=100},
+  {id:'streak3',icon:'🔥',name:'3 дня подряд',desc:'Учись 3 дня подряд',check:g=>g.streak>=3},
+  {id:'streak7',icon:'🔥🔥',name:'Неделя!',desc:'7 дней подряд',check:g=>g.streak>=7},
+  {id:'streak30',icon:'🌙',name:'Месяц!',desc:'30 дней подряд',check:g=>g.streak>=30},
+  {id:'day1',icon:'🎯',name:'День 1 пройден',desc:'Заверши первый урок',check:g=>g.daysCompleted>=1},
+  {id:'week1',icon:'🗓️',name:'Неделя учёбы',desc:'Заверши 7 уроков',check:g=>g.daysCompleted>=7},
+  {id:'perfect',icon:'💯',name:'Перфекционист',desc:'10 правильных подряд',check:g=>g.currentStreak>=10},
+  {id:'acc90',icon:'🎖️',name:'Точность 90%',desc:'Точность выше 90%',check:g=>g.totalAnswered>=20&&g.totalCorrect/g.totalAnswered>=0.9},
+];
+
+/* ══ STATE ══ */
+let G={xp:0,streak:0,lastStudyDate:'',daysCompleted:0,totalCorrect:0,totalAnswered:0,currentStreak:0,earnedBadges:[],dayProgress:{}};
+let QZ={items:[],idx:0,correct:0,total:0,answered:false,dayId:null};
+let CURRENT_DAY=null;
+let PREV_SEC='home';
+
+function loadG(){try{const s=localStorage.getItem('english_g');if(s)G=Object.assign(G,JSON.parse(s));}catch(e){}}
+function saveG(){localStorage.setItem('english_g',JSON.stringify(G));}
+
+function getLv(){
+  for(let i=LEVELS.length-1;i>=0;i--) if(G.xp>=LEVELS[i].xp) return LEVELS[i];
+  return LEVELS[0];
+}
+function getNextLv(){
+  const cur=getLv();
+  return LEVELS.find(l=>l.xp>cur.xp)||cur;
+}
+
+function addXP(amount){
+  G.xp+=amount;
+  showXPPop('+'+amount+' XP ✨');
+  checkBadges();
+  saveG();
+  updateHeader();
+}
+function showXPPop(msg){
+  const el=document.getElementById('xp-pop');
+  el.textContent=msg; el.className='xp-pop show';
+  setTimeout(()=>el.className='xp-pop',1400);
+}
+
+function checkStreak(){
+  const today=new Date().toDateString();
+  const yesterday=new Date(Date.now()-86400000).toDateString();
+  if(G.lastStudyDate===today) return;
+  if(G.lastStudyDate===yesterday) G.streak++;
+  else if(G.lastStudyDate!==today) G.streak=1;
+  G.lastStudyDate=today;
+  saveG();
+  updateHeader();
+}
+function checkBadges(){
+  let newBadge=false;
+  BADGES.forEach(b=>{
+    if(!G.earnedBadges.includes(b.id)&&b.check(G)){
+      G.earnedBadges.push(b.id);
+      newBadge=true;
+      toast('🏅 Достижение: '+b.name+'!');
+    }
+  });
+  if(newBadge) saveG();
+}
+
+/* ══ NAVIGATION ══ */
+function go(sec){
+  if(sec!=='learn') PREV_SEC=sec;
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('sec-'+sec).classList.add('on');
+  document.querySelectorAll('.nb').forEach(b=>{
+    const map={home:'🏠',program:'📅',quiz:'✏️',progress:'📊'};
+    if(b.querySelector('.ni').textContent===map[sec]) b.classList.add('on');
+  });
+  if(sec==='home') renderHome();
+  if(sec==='program') renderProgram();
+  if(sec==='quiz') startQuiz();
+  if(sec==='progress') renderProgress();
+}
+function goBack(){ go(PREV_SEC); }
+
+/* ══ HOME ══ */
+function renderHome(){
+  updateHeader();
+  const lv=getLv(), nextLv=getNextLv();
+  const xpInLv=G.xp-lv.xp, xpNeeded=nextLv.xp-lv.xp;
+  const pct=xpNeeded>0?Math.round(xpInLv/xpNeeded*100):100;
+  document.getElementById('lv-name').textContent='Уровень '+lv.lv;
+  document.getElementById('lv-title').textContent=lv.name;
+  document.getElementById('lv-icon').textContent=lv.icon;
+  document.getElementById('xp-bar-fill').style.width=pct+'%';
+  document.getElementById('xp-label').textContent=G.xp+' / '+nextLv.xp+' XP';
+
+  // Today card
+  const allDays=DAY_PLAN;
+  const todayDay=allDays.find(d=>!(G.dayProgress[d.day]?.done))||allDays[allDays.length-1];
+  const dp=G.dayProgress[todayDay.day]||{seen:0};
+  const pct2=Math.round((dp.seen||0)/10*100);
+  document.getElementById('today-card').innerHTML=`
+    <div class="today-tag">📖 Сегодня</div>
+    <h3>День ${todayDay.day}: ${todayDay.title}</h3>
+    <p>10 новых слов и выражений</p>
+    <div class="today-progress">
+      <div class="tp-bar"><div class="tp-fill" style="width:${pct2}%"></div></div>
+      <span class="tp-label">${dp.seen||0} / 10</span>
+    </div>
+    <button class="btn-start" onclick="openDay(${todayDay.day})">Начать урок →</button>
+  `;
+
+  // Stats
+  const words=allWords().length;
+  const learned=Object.values(G.dayProgress).filter(d=>d.done).length*10;
+  const acc=G.totalAnswered>0?Math.round(G.totalCorrect/G.totalAnswered*100):0;
+  document.getElementById('home-stats').innerHTML=`
+    <div class="stat-mini"><div class="stat-n">${G.streak}</div><div class="stat-l">🔥 Дней подряд</div></div>
+    <div class="stat-mini"><div class="stat-n">${learned}</div><div class="stat-l">📚 Изучено слов</div></div>
+    <div class="stat-mini"><div class="stat-n">${acc}%</div><div class="stat-l">🎯 Точность</div></div>
+  `;
+
+  // Badges
+  const el=document.getElementById('home-badges');
+  el.innerHTML='';
+  BADGES.slice(0,6).forEach(b=>{
+    const e=G.earnedBadges.includes(b.id);
+    el.innerHTML+=`<div class="badge-chip ${e?'earned':'locked'}">${b.icon} ${b.name}</div>`;
+  });
+}
+
+function updateHeader(){
+  document.getElementById('streak-n').textContent=G.streak;
+  document.getElementById('xp-n').textContent=G.xp;
+}
+
+/* ══ PROGRAM ══ */
+function renderProgram(){
+  const el=document.getElementById('program-content');
+  el.innerHTML='';
+  const weeks=[
+    {w:1,days:[1,2,3,4]},{w:2,days:[5,6,7,8]},{w:3,days:[9,10,11,12]},{w:4,days:[13,14,15]}
+  ];
+  const todayDayNum=(DAY_PLAN.find(d=>!G.dayProgress[d.day]?.done)||DAY_PLAN[DAY_PLAN.length-1]).day;
+
+  weeks.forEach(wk=>{
+    const total=wk.days.length*10;
+    const done=wk.days.filter(d=>G.dayProgress[d]?.done).length;
+    let html=`<div class="week-section">
+      <div class="week-title">
+        <span>Неделя ${wk.w} · ${done*10}/${total} слов</span>
+        <button class="add-words-btn" onclick="openAddModal(${wk.days[wk.days.length-1]})">+ Добавить слова</button>
+      </div>
+      <div class="day-grid">`;
+    wk.days.forEach(dayNum=>{
+      const plan=DAY_PLAN.find(d=>d.day===dayNum);
+      if(!plan) return;
+      const dp=G.dayProgress[dayNum]||{};
+      const isDone=dp.done;
+      const isToday=dayNum===todayDayNum;
+      const isLocked=dayNum>todayDayNum+1&&!isDone;
+      const seen=dp.seen||0;
+      const cls=isDone?'done':isToday?'today-day':isLocked?'locked':'';
+      html+=`<div class="day-card ${cls}" onclick="${isLocked?'':'openDay('+dayNum+')'}">
+        <div class="day-num">День ${dayNum}</div>
+        <div class="day-name">${plan.title}</div>
+        <div class="day-words">${plan.ids.length} слов</div>
+        <div class="day-pbar"><div class="day-pfill" style="width:${Math.round(seen/10*100)}%"></div></div>
+        ${isDone?'<div class="day-done-mark">✅</div>':isToday?'<div class="day-done-mark">📌</div>':isLocked?'<div class="day-done-mark">🔒</div>':''}
+      </div>`;
+    });
+    html+='</div></div>';
+    el.innerHTML+=html;
+  });
+}
+
+/* ══ OPEN DAY ══ */
+function openDay(dayNum){
+  CURRENT_DAY=dayNum;
+  const activeNb=document.querySelector('.nb.on .nl');
+  if(activeNb) PREV_SEC=activeNb.textContent==='Программа'?'program':'home';
+  const plan=DAY_PLAN.find(d=>d.day===dayNum);
+  if(!plan) return;
+  document.getElementById('learn-title').textContent='День '+dayNum+': '+plan.title;
+
+  const words=plan.ids.map(id=>allWords().find(w=>w.id===id)).filter(Boolean);
+  const dp=G.dayProgress[dayNum]||{seen:0};
+
+  let html='';
+  // word list
+  words.forEach((w,i)=>{
+    const bg=CC[w.cat]?CC[w.cat][0]:'#F5F0EA';
+    html+=`<div class="dwl-item" onclick="showWordDetail(${w.id})">
+      <div class="dwl-em" style="background:${bg}">${w.em}</div>
+      <div class="dwl-info">
+        <div class="dwl-en">${w.en}</div>
+        <div class="dwl-ru">${w.ru}</div>
+        <div class="dwl-ex">${w.ex}</div>
+      </div>
+      <button class="aud-btn" style="flex-shrink:0" onclick="event.stopPropagation();speak('${w.en.replace(/'/g,"\\'")}')" title="Слушать">🔊</button>
+    </div>`;
+  });
+  html+=`<div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <button class="btn-outline" onclick="markDaySeen(${dayNum})">✓ Изучил слова</button>
+    <button class="btn-start" onclick="startDayQuiz(${dayNum})">Тест по уроку →</button>
+  </div>`;
+
+  document.getElementById('learn-content').innerHTML=html;
+  go('learn');
+}
+
+function markDaySeen(dayNum){
+  if(!G.dayProgress[dayNum]) G.dayProgress[dayNum]={};
+  G.dayProgress[dayNum].seen=10;
+  G.dayProgress[dayNum].done=true;
+  G.daysCompleted=Object.values(G.dayProgress).filter(d=>d.done).length;
+  addXP(30);
+  checkStreak();
+  checkBadges();
+  saveG();
+  toast('✅ Слова отмечены как изученные! +30 XP');
+  openDay(dayNum);
+}
+
+function showWordDetail(id){
+  const w=allWords().find(x=>x.id===id);
+  if(!w) return;
+  const bg1=CC[w.cat]?CC[w.cat][0]:'#F5F0EA';
+  const bg2=CC[w.cat]?CC[w.cat][1]:'#C09070';
+  const mnem=MN[w.id]||'';
+  const html=`
+    <button class="back-btn" onclick="openDay(${CURRENT_DAY})" style="margin-bottom:14px;display:block">← Назад к уроку</button>
+    <div class="word-card-big">
+      <div class="wc-img" style="background:linear-gradient(135deg,${bg1},${bg2}22)">${w.em}</div>
+      <div class="wc-body">
+        <div class="wc-en">${w.en}</div>
+        <div class="wc-ru">${w.ru}</div>
+        <div class="wc-ex">${w.ex}</div>
+        <div class="wc-exru">${w.exru}</div>
+        ${mnem?`<div class="wc-mnem">🧠 ${mnem}</div>`:''}
+      </div>
+      <div class="wc-foot">
+        <button class="aud-btn" onclick="speak('${w.en.replace(/'/g,"\\'")}')">🔊 Прослушать</button>
+        <button class="aud-btn" onclick="speak('${w.ex.replace(/'/g,"\\'")}')">🔊 Пример</button>
+      </div>
+    </div>`;
+  document.getElementById('learn-content').innerHTML=html;
+}
+
+/* ══ QUIZ ══ */
+function startQuiz(dayId){
+  checkStreak();
+  const pool=dayId
+    ?DAY_PLAN.find(d=>d.day===dayId)?.ids.map(id=>allWords().find(w=>w.id===id)).filter(Boolean)
+    :allWords().sort(()=>Math.random()-.5).slice(0,15);
+
+  QZ.items=pool||[];
+  QZ.idx=0; QZ.correct=0; QZ.total=QZ.items.length; QZ.answered=false; QZ.dayId=dayId||null;
+  if(!QZ.items.length){document.getElementById('qz-content').innerHTML='<p style="text-align:center;padding:40px;color:var(--ts)">Нет слов для теста</p>';return;}
+  nextQ();
+}
+function startDayQuiz(dayId){CURRENT_DAY=dayId;go('quiz');startQuiz(dayId);}
+
+function nextQ(){
+  QZ.answered=false;
+  if(QZ.idx>=QZ.items.length){showQuizDone();return;}
+  const v=QZ.items[QZ.idx];
+  const t=QZ.idx%3;
+  document.getElementById('qz-pfill').style.width=(QZ.idx/QZ.total*100)+'%';
+  document.getElementById('qz-ctr').textContent=(QZ.idx+1)+' / '+QZ.total;
+  document.getElementById('qz-score').textContent=QZ.total?Math.round(QZ.correct/Math.max(QZ.idx,1)*100)+'%':'0%';
+  if(t===0) renderMC(v);
+  else if(t===1) renderFill(v);
+  else renderType(v);
+}
+
+function renderMC(v){
+  const aw=allWords();
+  const wrong=aw.filter(x=>x.id!==v.id).sort(()=>Math.random()-.5).slice(0,3);
+  const opts=[v,...wrong].sort(()=>Math.random()-.5);
+  document.getElementById('qz-content').innerHTML=`
+    <div class="qz-em">${v.em}</div>
+    <div class="qz-label">Как сказать по-английски?</div>
+    <div class="qz-q">${v.ru}</div>
+    <div class="mc-grid">
+      ${opts.map(o=>`<button class="mc-btn" onclick="checkMC(this,${o.id==v.id},${v.id})" data-ok="${o.id===v.id}">${o.en}</button>`).join('')}
+    </div>
+    <div class="qz-fb" id="qz-fb"></div>
+    <button class="btn-next on" id="btn-next" onclick="nextQ()" style="display:none">Дальше →</button>`;
+}
+function checkMC(el,ok,vid){
+  if(QZ.answered) return;
+  QZ.answered=true;
+  G.totalAnswered++;
+  if(ok){QZ.correct++;G.totalCorrect++;G.currentStreak++;el.classList.add('ok');addXP(15);}
+  else{G.currentStreak=0;el.classList.add('bad');document.querySelector('.mc-btn[data-ok="true"]').classList.add('ok');}
+  document.querySelectorAll('.mc-btn').forEach(b=>b.disabled=true);
+  showFB(ok, allWords().find(x=>x.id==vid)?.en||'');
+  QZ.idx++;
+  saveG();
+}
+
+function renderFill(v){
+  document.getElementById('qz-content').innerHTML=`
+    <div class="qz-em">${v.em}</div>
+    <div class="qz-label">Вставь пропущенное слово</div>
+    <div class="qz-q">${v.blank.replace('___','<em>___</em>')}</div>
+    <input class="qz-inp" id="qz-inp" placeholder="Введи слово..." autocomplete="off" onkeydown="if(event.key==='Enter')checkFill(${v.id})">
+    <div class="qz-fb" id="qz-fb"></div>
+    <button class="btn-check" onclick="checkFill(${v.id})">Проверить</button>
+    <button class="btn-next" id="btn-next" onclick="nextQ()">Дальше →</button>`;
+  setTimeout(()=>document.getElementById('qz-inp')?.focus(),80);
+}
+function checkFill(vid){
+  if(QZ.answered) return;
+  const v=allWords().find(x=>x.id==vid);
+  const inp=document.getElementById('qz-inp');
+  const ans=inp.value.trim().toLowerCase();
+  const ok=ans===v.ans.toLowerCase()||ans===v.en.toLowerCase()||(v.en.toLowerCase().includes(ans)&&ans.length>2);
+  QZ.answered=true; G.totalAnswered++;
+  if(ok){QZ.correct++;G.totalCorrect++;G.currentStreak++;inp.classList.add('ok');addXP(15);}
+  else{G.currentStreak=0;inp.classList.add('bad');}
+  QZ.idx++;
+  showFB(ok,v.ans); saveG();
+}
+
+function renderType(v){
+  document.getElementById('qz-content').innerHTML=`
+    <div class="qz-em">${v.em}</div>
+    <div class="qz-label">Переведи на английский</div>
+    <div class="qz-q">${v.ru}</div>
+    <input class="qz-inp" id="qz-inp" placeholder="Напиши по-английски..." autocomplete="off" onkeydown="if(event.key==='Enter')checkType(${v.id})">
+    <div class="qz-fb" id="qz-fb"></div>
+    <button class="btn-check" onclick="checkType(${v.id})">Проверить</button>
+    <button class="btn-next" id="btn-next" onclick="nextQ()">Дальше →</button>`;
+  setTimeout(()=>document.getElementById('qz-inp')?.focus(),80);
+}
+function checkType(vid){
+  if(QZ.answered) return;
+  const v=allWords().find(x=>x.id==vid);
+  const inp=document.getElementById('qz-inp');
+  const ans=inp.value.trim().toLowerCase();
+  const en=v.en.toLowerCase();
+  const ok=ans===en||en.includes(ans)&&ans.length>=3||lev(ans,en)<=2;
+  QZ.answered=true; G.totalAnswered++;
+  if(ok){QZ.correct++;G.totalCorrect++;G.currentStreak++;inp.classList.add('ok');addXP(15);}
+  else{G.currentStreak=0;inp.classList.add('bad');}
+  QZ.idx++;
+  showFB(ok,v.en); saveG();
+}
+
+function showFB(ok,answer){
+  const fb=document.getElementById('qz-fb');
+  fb.className='qz-fb on '+(ok?'ok':'bad');
+  const safeAns=answer.replace(/'/g,"\\'");
+  fb.innerHTML=ok?`✅ Правильно! <button onclick="speak('${safeAns}')" style="background:none;border:none;cursor:pointer">🔊</button>`:`❌ Ответ: <strong>${answer}</strong> <button onclick="speak('${safeAns}')" style="background:none;border:none;cursor:pointer">🔊</button>`;
+  const bn=document.getElementById('btn-next');
+  if(bn){bn.style.display='block';}
+  const bc=document.querySelector('.btn-check');
+  if(bc) bc.style.display='none';
+  document.getElementById('qz-score').textContent=Math.round(QZ.correct/Math.max(QZ.idx,1)*100)+'%';
+}
+
+function showQuizDone(){
+  const pct=Math.round(QZ.correct/QZ.total*100);
+  const icon=pct>=80?'🎉':pct>=60?'👍':'💪';
+  const msg=pct>=80?'Отлично!':pct>=60?'Хорошая работа!':'Продолжай практиковаться!';
+  if(QZ.dayId){
+    if(!G.dayProgress[QZ.dayId]) G.dayProgress[QZ.dayId]={};
+    G.dayProgress[QZ.dayId].done=true;
+    G.dayProgress[QZ.dayId].seen=10;
+    G.daysCompleted=Object.values(G.dayProgress).filter(d=>d.done).length;
+    addXP(50);
+  }
+  checkBadges(); saveG();
+  document.getElementById('qz-card').innerHTML=`
+    <div style="text-align:center;padding:30px 10px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+      <div style="font-size:64px">${icon}</div>
+      <h2 style="font-size:26px;color:var(--ad)">${msg}</h2>
+      <div style="font-size:48px;font-weight:700;color:var(--a);font-family:'Playfair Display',serif">${pct}%</div>
+      <p style="color:var(--ts);font-size:14px">${QZ.correct} из ${QZ.total} правильно</p>
+      <button class="btn-start" onclick="startQuiz()" style="width:auto;padding:12px 28px">Ещё раз 🔄</button>
+      <button class="btn-outline" onclick="go('home')" style="width:auto;padding:10px 24px">На главную 🏠</button>
+    </div>`;
+  document.getElementById('qz-pfill').style.width='100%';
+}
+
+function lev(a,b){
+  const m=a.length,n=b.length;
+  if(m>10||n>10) return Math.abs(m-n);
+  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i?j?0:i:j));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++) dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+
+/* ══ PROGRESS ══ */
+function renderProgress(){
+  const acc=G.totalAnswered>0?Math.round(G.totalCorrect/G.totalAnswered*100):0;
+  document.getElementById('big-pct').textContent=acc+'%';
+  const lv=getLv();
+  const learned=Object.values(G.dayProgress).filter(d=>d.done).length*10;
+  document.getElementById('stat-grid').innerHTML=`
+    <div class="sg-card"><div class="sg-n">${G.xp}</div><div class="sg-l">⭐ Очки XP</div></div>
+    <div class="sg-card"><div class="sg-n">${G.streak}</div><div class="sg-l">🔥 Дней подряд</div></div>
+    <div class="sg-card"><div class="sg-n">${lv.name}</div><div class="sg-l">${lv.icon} Уровень ${lv.lv}</div></div>
+    <div class="sg-card"><div class="sg-n">${learned}</div><div class="sg-l">📚 Изучено слов</div></div>
+    <div class="sg-card"><div class="sg-n">${G.totalCorrect}</div><div class="sg-l">✅ Правильных</div></div>
+    <div class="sg-card"><div class="sg-n">${G.daysCompleted}</div><div class="sg-l">🗓️ Уроков пройдено</div></div>`;
+  const bg=document.getElementById('badges-grid');
+  bg.innerHTML='';
+  BADGES.forEach(b=>{
+    const e=G.earnedBadges.includes(b.id);
+    bg.innerHTML+=`<div class="badge-card ${e?'earned':'locked'}">
+      <div class="badge-icon">${b.icon}</div>
+      <div class="badge-name">${b.name}</div>
+      <div class="badge-desc">${b.desc}</div>
+    </div>`;
+  });
+}
+
+/* ══ ADD WORDS ══ */
+let addToDay=1;
+function openAddModal(dayNum){
+  addToDay=dayNum;
+  const sel=document.getElementById('m-day');
+  sel.innerHTML=DAY_PLAN.map(d=>`<option value="${d.day}"${d.day===dayNum?' selected':''}>День ${d.day}: ${d.title}</option>`).join('');
+  document.getElementById('add-modal').classList.remove('hide');
+}
+function closeModal(){document.getElementById('add-modal').classList.add('hide');}
+function saveCustomWord(){
+  const en=document.getElementById('m-en').value.trim();
+  const ru=document.getElementById('m-ru').value.trim();
+  if(!en||!ru){toast('Введи английское и русское слово');return;}
+  const ex=document.getElementById('m-ex').value.trim()||en+' is a useful word.';
+  const exru=document.getElementById('m-exru').value.trim()||ru+' — полезное слово.';
+  const em=document.getElementById('m-em').value.trim()||'📝';
+  const dayNum=parseInt(document.getElementById('m-day').value)||1;
+  const words=loadCustomWords();
+  const newId=10000+Date.now()%1000000;
+  const w={id:newId,en,ru,ex,exru,em,cat:'common',blank:en+' is a ___ word.',ans:en.split(' ')[0].toLowerCase(),custom:true};
+  words.push(w);
+  localStorage.setItem('custom_words',JSON.stringify(words));
+  const plan=DAY_PLAN.find(d=>d.day===dayNum);
+  if(plan&&!plan.ids.includes(newId)) plan.ids.push(newId);
+  closeModal();
+  ['m-en','m-ru','m-ex','m-exru','m-em'].forEach(id=>document.getElementById(id).value='');
+  toast('✅ Слово добавлено: '+en);
+}
+
+/* ══ SPEECH ══ */
+function speak(text){
+  if(!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-US'; u.rate=0.82; u.pitch=1;
+  window.speechSynthesis.speak(u);
+}
+
+/* ══ TOAST ══ */
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'),2800);
+}
+
+function resetAll(){
+  if(confirm('Сбросить весь прогресс? Это нельзя отменить.')){
+    G={xp:0,streak:0,lastStudyDate:'',daysCompleted:0,totalCorrect:0,totalAnswered:0,currentStreak:0,earnedBadges:[],dayProgress:{}};
+    saveG(); renderProgress(); renderHome(); updateHeader();
+    toast('Прогресс сброшен');
+  }
+}
+
+/* ══ INIT ══ */
+loadG(); checkStreak(); renderHome();
+</script>
+</body>
+</html>
