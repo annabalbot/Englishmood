@@ -807,6 +807,9 @@ function showWordDetail(id){
 /* ══ QUIZ ══ */
 function startQuiz(dayId){
   checkStreak();
+  const card=document.getElementById('qz-card');
+  if(card && !document.getElementById('qz-content')) card.innerHTML='<div id="qz-content"></div>';
+  const pf=document.getElementById('qz-pfill'); if(pf) pf.style.width='0%';
   const pool=dayId
     ?DAY_PLAN.find(d=>d.day===dayId)?.ids.map(id=>allWords().find(w=>w.id===id)).filter(Boolean)
     :allWords().sort(()=>Math.random()-.5).slice(0,15);
@@ -936,7 +939,8 @@ function showQuizDone(){
       <h2 style="font-size:26px;color:var(--ad)">${msg}</h2>
       <div style="font-size:48px;font-weight:700;color:var(--a);font-family:'Playfair Display',serif">${pct}%</div>
       <p style="color:var(--ts);font-size:14px">${QZ.correct} из ${QZ.total} правильно</p>
-      <button class="btn-start" onclick="startQuiz()" style="width:auto;padding:12px 28px">Ещё раз 🔄</button>
+      <button class="btn-start" onclick="startQuiz()" style="width:auto;padding:12px 28px">Другой тест 🔄</button>
+      <button class="btn-outline" onclick="go('program')" style="width:auto;padding:10px 24px">К урокам 📅</button>
       <button class="btn-outline" onclick="go('home')" style="width:auto;padding:10px 24px">На главную 🏠</button>
     </div>`;
   document.getElementById('qz-pfill').style.width='100%';
